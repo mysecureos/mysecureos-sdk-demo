@@ -13,6 +13,28 @@ the key (from `.env`) and calls `mysecureos-sdk`'s `MySecureOSPartnerClient`
 on the app's behalf — the Expo app (`App.tsx`) only ever talks to *that*
 server's two plain endpoints, over `fetch`, with no key involved.
 
+## Screenshots
+
+Running on a physical Android device, against the local dev API.
+
+### Mode 1 — the SDK's `<PanicScreen>`
+
+The whole MySecureOS panic UI as one component (`location`, `subject`,
+`confirmSeconds`, `backend`).
+
+| Idle | 5s cancel window | Emergency active | Clear confirm |
+| --- | --- | --- | --- |
+| ![SOS button, GPS fix resolved](docs/screenshots/sdk-panicscreen-idle.jpeg) | ![Sending in 2… with Cancel](docs/screenshots/sdk-panicscreen-countdown.jpeg) | ![EMERGENCY ACTIVE, armed response notified](docs/screenshots/sdk-panicscreen-active.jpeg) | ![Clear your emergency? dialog](docs/screenshots/sdk-panicscreen-clear-confirm.jpeg) |
+
+### Mode 2 — a custom UI on `usePanic()`
+
+Same hook state (`active`, `fix`, `sending`, `activate`, `clear`, …),
+a deliberately plain layout to show the UI isn't locked to the SDK.
+
+| Idle | Pending | Resolved |
+| --- | --- | --- |
+| ![custom UI, send SOS](docs/screenshots/custom-usepanic-idle.jpeg) | ![status: pending, clear](docs/screenshots/custom-usepanic-pending.jpeg) | ![status: resolved, reset](docs/screenshots/custom-usepanic-resolved.jpeg) |
+
 ## Setup
 
 ```bash
