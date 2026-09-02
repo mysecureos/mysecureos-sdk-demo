@@ -5,19 +5,19 @@ demonstrating the trusted-partner flow. It activates a test emergency (with
 a 5-second cancel window before it's actually sent) and clears it with a
 reason.
 
-The app itself holds **no API key at all** — that's the point. A
+The app itself holds **no API key at all**  that's the point. A
 trusted-partner API key is a server secret; shipping it inside a phone
 app bundle would let anyone who decompiles the APK read it out. Instead,
 `server.ts` in this same project is a small standalone server that holds
 the key (from `.env`) and calls `mysecureos-sdk`'s `MySecureOSPartnerClient`
-on the app's behalf — the Expo app (`App.tsx`) only ever talks to *that*
+on the app's behalf  the Expo app (`App.tsx`) only ever talks to *that*
 server's two plain endpoints, over `fetch`, with no key involved.
 
 ## Screenshots
 
 Running on a physical Android device, against the local dev API.
 
-### Mode 1 — the SDK's `<PanicScreen>`
+### Mode 1  the SDK's `<PanicScreen>`
 
 The whole MySecureOS panic UI as one component (`location`, `subject`,
 `confirmSeconds`, `backend`).
@@ -26,7 +26,7 @@ The whole MySecureOS panic UI as one component (`location`, `subject`,
 | --- | --- | --- | --- |
 | ![SOS button, GPS fix resolved](docs/screenshots/sdk-panicscreen-idle.jpeg) | ![Sending in 2… with Cancel](docs/screenshots/sdk-panicscreen-countdown.jpeg) | ![EMERGENCY ACTIVE, armed response notified](docs/screenshots/sdk-panicscreen-active.jpeg) | ![Clear your emergency? dialog](docs/screenshots/sdk-panicscreen-clear-confirm.jpeg) |
 
-### Mode 2 — a custom UI on `usePanic()`
+### Mode 2  a custom UI on `usePanic()`
 
 Same hook state (`active`, `fix`, `sending`, `activate`, `clear`, …),
 a deliberately plain layout to show the UI isn't locked to the SDK.
@@ -44,18 +44,18 @@ cp .env.example .env
 
 Edit `.env`:
 
-- `MYSECUREOS_BASE_URL` — the MySecureOS API `server.ts` forwards to
+- `MYSECUREOS_BASE_URL`  the MySecureOS API `server.ts` forwards to
   (defaults to the local dev API, `http://localhost:4000`).
-- `MYSECUREOS_API_KEY` — a trusted-partner key, generated from the tenant
+- `MYSECUREOS_API_KEY`  a trusted-partner key, generated from the tenant
   dashboard's Settings > API Keys (`http://localhost:3000/tenant/settings`,
   log in as `admin@mysecureos.co.za` / `mysecureos-dev-only`). Shown once,
-  at creation. `.env` is gitignored — never commit a real key.
-- `PORT` — what `server.ts` listens on (defaults to `4100`; the app's
+  at creation. `.env` is gitignored  never commit a real key.
+- `PORT`  what `server.ts` listens on (defaults to `4100`; the app's
   `EXPO_PUBLIC_PROXY_URL` should match).
 
 `mysecureos-sdk` is installed from the sibling `../mysecureos-sdk`
 checkout. This project's `.npmrc` sets `install-links=true` so it's copied
-in rather than symlinked — a plain symlink would resolve the SDK's
+in rather than symlinked  a plain symlink would resolve the SDK's
 `import ... from 'react'` against the *SDK repo's own* `node_modules/react`
 (needed there for its own build/tests) instead of this project's copy,
 producing two separate React instances and an "Invalid hook call" error.
@@ -91,13 +91,13 @@ and put it in this project's `.env`.
 npm run server   # listens on :4100
 ```
 
-Keep this running alongside the Expo app — it's a separate Node process,
+Keep this running alongside the Expo app  it's a separate Node process,
 not part of the Metro/Expo bundle.
 
 ### 3. Connect the phone
 
 1. Enable USB debugging on the phone (Developer Options) and plug it in.
-2. Accept the "Allow USB debugging?" prompt on the device — `adb devices`
+2. Accept the "Allow USB debugging?" prompt on the device  `adb devices`
    should show it as `device`, not `unauthorized`.
 
 ### 4. Build and install
@@ -108,7 +108,7 @@ npx expo run:android
 
 This builds, installs, and launches the app on the connected device, and
 starts the Metro bundler. **First run does a full native build** (Gradle +
-NDK/CMake) — this can take a long time depending on network speed, since it
+NDK/CMake)  this can take a long time depending on network speed, since it
 has to download large native dependencies (e.g. the `react-android` AAR,
 which alone is ~279 MB). Later runs reuse the Gradle cache and are much
 faster (a manifest-only or JS-only change rebuilds in well under a minute).
@@ -128,10 +128,10 @@ Same pattern as the `mysecureos` monorepo's `apps/mobile` (see its root
 `README.md`): the app reaches Metro (`:8081`) and `server.ts` (`:4100`)
 through `adb reverse` tunnels. `expo run:android` sets up `:8081`
 automatically, but `:4100` needs to be added manually. (No tunnel is
-needed for `:4000` — `server.ts` runs on your dev machine and reaches the
+needed for `:4000`  `server.ts` runs on your dev machine and reaches the
 MySecureOS API directly over `localhost`; the phone never talks to it.)
 Neither tunnel survives a USB reconnect, phone reboot, or `adb` server
-restart — if the app hangs on the splash screen or a request fails,
+restart  if the app hangs on the splash screen or a request fails,
 re-create both and reopen the app:
 
 ```bash
@@ -143,7 +143,7 @@ adb reverse tcp:4100 tcp:4100   # server.ts
 
 The installed app can get removed independently of this project (e.g. a
 manual uninstall while testing). Since the APK doesn't change unless native
-code, `app.json`, or the manifest changed, you don't need a full rebuild —
+code, `app.json`, or the manifest changed, you don't need a full rebuild 
 just reinstall and relaunch:
 
 ```bash
@@ -159,7 +159,7 @@ adb shell am start -n com.mysecureos.sdkdemo/.MainActivity
 EXPO_PUBLIC_PROXY_URL=http://localhost:4100 npx expo run:android
 ```
 
-Omit to default to that same URL — only worth overriding if you run
+Omit to default to that same URL  only worth overriding if you run
 `server.ts` on a different port.
 
 ### Troubleshooting: cleartext (plain HTTP) traffic blocked
@@ -168,7 +168,7 @@ Android blocks plain `http://` requests by default, which would break
 `server.ts` (`http://localhost:4100`, no TLS). `app.json` sets
 `android.usesCleartextTraffic: true` for this, and it's also hand-patched
 into the already-generated `android/app/src/main/AndroidManifest.xml`
-(`android:usesCleartextTraffic="true"` on `<application>`) — if you ever
+(`android:usesCleartextTraffic="true"` on `<application>`)  if you ever
 regenerate `android/` with `expo prebuild --clean`, re-apply that manifest
 attribute, since a plain `app.json` change won't retroactively update an
 already-generated manifest.
@@ -191,18 +191,18 @@ hit this bug, removing these two lines restores normal parallel builds.
 ## What it shows
 
 - The right place for a trusted-partner API key: on a server (`server.ts`),
-  never in a phone app. `App.tsx` only knows that server's URL — it has no
+  never in a phone app. `App.tsx` only knows that server's URL  it has no
   concept of `mysecureos-sdk`'s `MySecureOSPartnerClient` or any API key at
   all, just two plain `fetch` calls to `server.ts`'s own small API
   (`POST /emergencies/activate`, `POST /emergencies/:id/clear`).
 - `server.ts` itself is the one place `MySecureOSPartnerClient` is used,
   loading `MYSECUREOS_BASE_URL`/`MYSECUREOS_API_KEY` from `.env`.
 - `App.tsx`'s `EmergencyScreen` adds a 5-second confirm countdown in front
-  of activating (cancelling during it never calls `server.ts` at all — no
+  of activating (cancelling during it never calls `server.ts` at all  no
   emergency is created), and always sends a reason when clearing an
   already-active one.
 - The phone's real GPS location (`expo-location`) is captured automatically
-  right when the countdown ends and sent with the activation — there's no
+  right when the countdown ends and sent with the activation  there's no
   manual latitude/longitude entry. Permission is requested up front, on
   app launch, not mid-emergency; if it's denied, activation still proceeds
   (`location` is optional server-side), just without coordinates.
