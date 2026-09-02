@@ -12,7 +12,7 @@
 // app bundle — this is a separate plain-Node process you run alongside it.
 import 'dotenv/config'
 import { type IncomingMessage, type ServerResponse, createServer } from 'node:http'
-import { MySecureOSPartnerClient } from 'mysecureos-sdk'
+import { MySecureOSApiError, MySecureOSPartnerClient } from 'mysecureos-sdk'
 
 const PORT = Number(process.env.PORT ?? 4100)
 const baseUrl = process.env.MYSECUREOS_BASE_URL
@@ -65,10 +65,13 @@ const server = createServer(async (req, res) => {
 
     sendJson(res, 404, { message: 'Not found' })
   } catch (err) {
-    // The real API's error message (e.g. "Invalid or revoked API key") passes
-    // through as-is — a real backend would likely log this and return
-    // something more generic, but surfacing it makes the demo easier to debug.
-    sendJson(res, 502, { message: err instanceof Error ? err.message : 'Upstream request failed' })
+    // The real API's error message (e.g. "Invalid or revoked API key", or the
+    // 402 "monthly SDK activation quota reached") passes through as-is, with its
+    // status — a real backend would likely log and return something more
+    // generic, but surfacing it makes the demo easier to debug. mysecureos-sdk
+    // throws MySecureOSApiError (with .status) / MySecureOSPaymentRequiredError.
+    const status = err instanceof MySecureOSApiError ? err.status : 502
+    sendJson(res, status, { message: err instanceof Error ? err.message : 'Upstream request failed' })
   }
 })
 

@@ -1,6 +1,11 @@
 import { StatusBar } from 'expo-status-bar'
 import * as Location from 'expo-location'
-import { PanicScreen, type PanicBackendConfig, usePanic } from 'mysecureos-sdk/react-native'
+import {
+  isEmergencyCleared,
+  PanicScreen,
+  type PanicBackendConfig,
+  usePanic,
+} from 'mysecureos-sdk/react-native'
 import { useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 
@@ -48,7 +53,7 @@ function CustomScreen() {
       <View style={styles.customBody}>
         <Text style={styles.customH}>status: {active.status}</Text>
         <Text style={styles.customMono}>{active.id}</Text>
-        {active.status === 'cancelled' ? (
+        {isEmergencyCleared(active) ? (
           <Pressable style={styles.customBtn} onPress={dismiss}>
             <Text style={styles.customBtnText}>reset</Text>
           </Pressable>
