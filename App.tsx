@@ -5,14 +5,14 @@ import {
   PanicScreen,
   type PanicBackendConfig,
   usePanic,
-} from 'mysecureos-sdk/react-native'
+} from 'mysecureos-js-sdk/react-native'
 import { useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
 
 // The trusted-partner API key is a server secret — it never belongs in a
 // phone app bundle (anyone can decompile an APK and read it out). This app
 // only ever talks to server.ts's own two endpoints; *that* server is the one
-// holding the key (from its own .env) and calling mysecureos-sdk's
+// holding the key (from its own .env) and calling mysecureos-js-sdk's
 // MySecureOSPartnerClient. Reach it over USB via `adb reverse tcp:4100
 // tcp:4100` — see this project's own README.
 const proxyUrl = process.env.EXPO_PUBLIC_PROXY_URL ?? 'http://localhost:4100'

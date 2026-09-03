@@ -1,7 +1,7 @@
 // The trusted-partner API key is a server secret — it never belongs inside
 // a phone app bundle (anyone can decompile an APK and read it out). This is
 // where it actually lives: a small server, loaded from .env, using
-// mysecureos-sdk's MySecureOSPartnerClient. App.tsx only ever talks to the
+// mysecureos-js-sdk's MySecureOSPartnerClient. App.tsx only ever talks to the
 // two endpoints below — it has no concept of the key at all.
 //
 // This is a minimal reference — it's the shape a real backend would take,
@@ -12,7 +12,7 @@
 // app bundle — this is a separate plain-Node process you run alongside it.
 import 'dotenv/config'
 import { type IncomingMessage, type ServerResponse, createServer } from 'node:http'
-import { MySecureOSApiError, MySecureOSPartnerClient } from 'mysecureos-sdk'
+import { MySecureOSApiError, MySecureOSPartnerClient } from 'mysecureos-js-sdk'
 
 const PORT = Number(process.env.PORT ?? 4100)
 const baseUrl = process.env.MYSECUREOS_BASE_URL
@@ -68,7 +68,7 @@ const server = createServer(async (req, res) => {
     // The real API's error message (e.g. "Invalid or revoked API key", or the
     // 402 "monthly SDK activation quota reached") passes through as-is, with its
     // status — a real backend would likely log and return something more
-    // generic, but surfacing it makes the demo easier to debug. mysecureos-sdk
+    // generic, but surfacing it makes the demo easier to debug. mysecureos-js-sdk
     // throws MySecureOSApiError (with .status) / MySecureOSPaymentRequiredError.
     const status = err instanceof MySecureOSApiError ? err.status : 502
     sendJson(res, status, { message: err instanceof Error ? err.message : 'Upstream request failed' })

@@ -9,7 +9,7 @@ The app itself holds **no API key at all**  that's the point. A
 trusted-partner API key is a server secret; shipping it inside a phone
 app bundle would let anyone who decompiles the APK read it out. Instead,
 `server.ts` in this same project is a small standalone server that holds
-the key (from `.env`) and calls `mysecureos-sdk`'s `MySecureOSPartnerClient`
+the key (from `.env`) and calls `mysecureos-js-sdk`'s `MySecureOSPartnerClient`
 on the app's behalf  the Expo app (`App.tsx`) only ever talks to *that*
 server's two plain endpoints, over `fetch`, with no key involved.
 
@@ -53,7 +53,7 @@ Edit `.env`:
 - `PORT`  what `server.ts` listens on (defaults to `4100`; the app's
   `EXPO_PUBLIC_PROXY_URL` should match).
 
-`mysecureos-sdk` is installed from the sibling `../mysecureos-sdk`
+`mysecureos-js-sdk` is installed from the sibling `../mysecureos-js-sdk`
 checkout. This project's `.npmrc` sets `install-links=true` so it's copied
 in rather than symlinked  a plain symlink would resolve the SDK's
 `import ... from 'react'` against the *SDK repo's own* `node_modules/react`
@@ -63,7 +63,7 @@ producing two separate React instances and an "Invalid hook call" error.
 If you change the SDK's source, rebuild it and reinstall here:
 
 ```bash
-(cd ../mysecureos-sdk && npm run build)
+(cd ../mysecureos-js-sdk && npm run build)
 npm install
 ```
 
@@ -192,7 +192,7 @@ hit this bug, removing these two lines restores normal parallel builds.
 
 - The right place for a trusted-partner API key: on a server (`server.ts`),
   never in a phone app. `App.tsx` only knows that server's URL  it has no
-  concept of `mysecureos-sdk`'s `MySecureOSPartnerClient` or any API key at
+  concept of `mysecureos-js-sdk`'s `MySecureOSPartnerClient` or any API key at
   all, just two plain `fetch` calls to `server.ts`'s own small API
   (`POST /emergencies/activate`, `POST /emergencies/:id/clear`).
 - `server.ts` itself is the one place `MySecureOSPartnerClient` is used,
