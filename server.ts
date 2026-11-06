@@ -4,9 +4,10 @@
 // mysecureos-js-sdk's MySecureOSPartnerClient. App.tsx only ever talks to the
 // two endpoints below — it has no concept of the key at all.
 //
-// This is a minimal reference — it's the shape a real backend would take,
-// not a production one. Real security (rate limiting, SDK-token checking)
-// lives in the MySecureOS API itself (apps/api), not duplicated here.
+// This is a minimal reference showing the shape a real backend would take.
+// It is NOT production-ready: it has no authentication, so anyone who can
+// reach it can raise an emergency. A real backend must authenticate its own
+// users first and only activate/clear emergencies on their behalf.
 //
 // Run with `npm run server` (see package.json). Not part of the Expo/Metro
 // app bundle — this is a separate plain-Node process you run alongside it.
@@ -22,7 +23,7 @@ if (!baseUrl || !apiKey) {
   console.error(
     'Missing MYSECUREOS_BASE_URL or MYSECUREOS_API_KEY.\n' +
       'Copy .env.example to .env and fill them in (get a key from ' +
-      "the tenant dashboard's Settings > API Keys).",
+      "the MySecureOS dashboard's Company Settings > API Keys).",
   )
   process.exit(1)
 }
@@ -36,6 +37,16 @@ async function readJsonBody(req: IncomingMessage): Promise<Record<string, unknow
   return raw ? JSON.parse(raw) : {}
 }
 
+function isLatLng(value: unknown): value is { lat: number; lng: number; accuracy?: number } {
+  if (typeof value !== 'object' || value === null) return false
+  const { lat, lng, accuracy } = value as Record<string, unknown>
+  return (
+    typeof lat === 'number' &&
+    typeof lng === 'number' &&
+    (accuracy === undefined || typeof accuracy === 'number')
+  )
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, { 'content-type': 'application/json' })
   res.end(JSON.stringify(body))
@@ -44,8 +55,12 @@ function sendJson(res: ServerResponse, status: number, body: unknown): void {
 const server = createServer(async (req, res) => {
   try {
     if (req.method === 'POST' && req.url === '/emergencies/activate') {
-      const input = await readJsonBody(req)
-      const emergency = await partner.activateEmergency(input)
+      // Forward only the fields we expect; never pass the raw request body
+      // straight through to the MySecureOS API.
+      const { location } = await readJsonBody(req)
+      const emergency = await partner.activateEmergency({
+        location: isLatLng(location) ? location : undefined,
+      })
       sendJson(res, 201, emergency)
       return
     }

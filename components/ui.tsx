@@ -1,5 +1,5 @@
-// Mirrors apps/mobile/components/ui.tsx's palette and primitives so this
-// demo looks like the real MySecureOS app rather than a generic RN starter.
+// Uses the MySecureOS app's palette and primitives so this demo looks like
+// the real MySecureOS app rather than a generic React Native starter.
 import type { PropsWithChildren } from 'react'
 import { ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native'
 

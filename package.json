@@ -1,13 +1,19 @@
 {
   "name": "mysecureos-sdk-demo-mobile",
   "version": "1.0.0",
+  "description": "Example Expo / React Native app and backend showing how to integrate mysecureos-js-sdk.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mysecureos/mysecureos-sdk-demo.git"
+  },
   "main": "index.ts",
   "dependencies": {
     "dotenv": "17.4.2",
     "expo": "~57.0.16",
     "expo-location": "^57.0.13",
     "expo-status-bar": "~57.0.1",
-    "mysecureos-js-sdk": "file:../mysecureos-js-sdk",
+    "mysecureos-js-sdk": "^0.2.4",
     "react": "19.2.3",
     "react-native": "0.86.2"
   },
